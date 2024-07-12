@@ -19,7 +19,7 @@ class BloomFilter {
 
     //Constructor
     public:
-    BloomFilter(ll n, ll k, vector<ll> prim_buffer, int np) {
+    BloomFilter(ll n, ll k, vector<ll> prim_buffer) {
         // Inicializar el vector M con n ceros
         M = vector<bool>(n, false);
         // Inicializar el vector de primos
@@ -28,7 +28,7 @@ class BloomFilter {
         this->k = k;
         this->m = n;
         // Llenar el vector de primos
-        fill_primes(prim_buffer, np);
+        fill_primes(prim_buffer, k);
     }
 
     //se asume que existe un vector prim_buffer con una cantidad mayor
