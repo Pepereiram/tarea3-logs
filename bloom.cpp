@@ -19,7 +19,7 @@ class BloomFilter {
 
     //Constructor
     public:
-    BloomFilter(ll n, ll k) {
+    BloomFilter(ll n, ll k, vector<ll> prim_buffer, int np) {
         // Inicializar el vector M con n ceros
         M = vector<bool>(n, false);
         // Inicializar el vector de primos
@@ -28,16 +28,15 @@ class BloomFilter {
         this->k = k;
         this->m = n;
         // Llenar el vector de primos
-        fill_primes();
+        fill_primes(prim_buffer, np);
     }
 
-    void fill_primes(){
-        // Llenar el vector de k primos distintos
-        // asumimos que existe un archivo JSON con x >> k primos
-        // y que podemos leerlos de ahí
-        // En este caso, se generan los primeros k primos
-        
-        //Abrimos el archivo JSON, llamado "primes.json" 
+    //se asume que existe un vector prim_buffer con una cantidad mayor
+    //o igual a n numeros primos
+    void fill_primes(vector<ll> prim_buffer, int n){
+        for(int i = 0; i < n; i++){
+            primes.push_back(prim_buffer[i]);
+        }
     }
 
     //Inpirado en GeeksforGeeks, Polynomial Rolling Hash Function
