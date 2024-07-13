@@ -1,17 +1,19 @@
+#include <bits/stdc++.h>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <time.h>
+#include <chrono>
+#include <ctime>
 using namespace std;
+using namespace chrono;
 // Inluir el archivo de cabecera bloom.h
 #include "bloom.h"
 #include "busquedaSecuencial.h"
-typedef vector<vector<string>> CSVData;
 
 // Definir las posibles combinaciones de N y p
-vector<int> N_values = {1024, 4096, 194481, 65536};
+vector<int> N_values = {1024, 4096, 16384, 65536};
 vector<double> p_values = {0, 0.25, 0.5, 0.75, 1.0};
 
 struct Combination {
@@ -48,68 +50,143 @@ vector<long long> extraerPrimos() {
     return extraccion;
 }
 
-// Función para generar conjuntos de datos en proporción P de elementos que están en el filtro
-// y 1-P de elementos que no están en el filtro
-vector<string> generateData(double P, int n, CSVData& babys, CSVData& films) {
+// Función para crear la data del filtro de bloom
+vector<string> bloomData(int N, vector<string>& babys) {
     vector<string> data;
-    for (int i = 0; i < n; ++i) {
-        string s = "string" + to_string(i);
-        if (bloom.lookup(s) && (rand() % 100) < P * 100) {
-            data.push_back(s);
-        } else if (!bloom.lookup(s) && (rand() % 100) < (1 - P) * 100) {
-            data.push_back(s);
-        }
+    random_shuffle(babys.begin(), babys.end());
+    // Elegimos los primeros N elementos de babys
+    for (int i = 0; i < N; i++) {
+        data.push_back(babys[i]);
     }
     return data;
 }
 
-
+// Función para generar conjuntos de datos en proporción P de elementos que están en el filtro
+// y 1-P de elementos que no están en el filtro
+vector<string> generateData(int n, double P, vector<string>& babys, vector<string>& films) {
+    vector<string> data;
+    // Los elementos de films seran randomizados 
+    random_shuffle(films.begin(), films.end());
+    // Elegimos n * P elementos de babys y n * (1 - P) elementos de films
+    for (int i = 0; i < n; i++) {
+        if (i < n * P) {
+            data.push_back(babys[i]);
+        } else {
+            data.push_back(films[i]);
+        }
+    }
+    // Randomizamos el vector de datos
+    random_shuffle(data.begin(), data.end());
+    return data;
+}
 
 
 int main() {
     cout << "------------------------- INICIO -------------------------" << endl;
+    
+    // archivo para guardar resultados
+	ofstream archivo;
+	cout << "Creando archivo de resultados" << endl;
+    archivo.open("resultados.txt", fstream::out);
+    archivo << "Resultados de la ejecución" << endl;
+    archivo << endl;
+    archivo.close();
+
     // Creamos las combinaciones de N y p
     vector<Combination> combinations = generateCombinations(N_values, p_values);
     // Extraemos los primos
     vector<long long> primos = extraerPrimos();
     // Leemos los CSV de Popular-Baby-Names-Final.csv y Film-Names.csv
-    CSVData babys = readCSV("Popular-Baby-Names-Final.csv");
-    CSVData films = readCSV("Film-Names.csv");
+    vector<string> babys = readCSV("Popular-Baby-Names-Final.csv");
+    vector<string> films = readCSV("Film-Names.csv");
     // En un ciclo, para cada combinación de N y p, generamos un conjunto de datos
     // con proporción p de elementos en babys y 1-p de elementos en films
-    
     for(const Combination& comb : combinations){
         cout << "Test para N: " << comb.N << " p: " << comb.p << endl;
-        // Creamos 
-        vector<string> babyBloom = bloomData(comb.N, comb.p, babys);
+        // Creamos un conjunto 
+        vector<string> babyBloom = bloomData(comb.N, babys);
         // Creamos los conjuntos de datos
         vector<string> data = generateData(comb.N, comb.p, babyBloom, films);
-        // Elegir m y k en funcion de N 
-        // m = -N * ln(p) / (ln(2))^2
-        // k = m / N * ln(2)
-        // inicializar filtrro de bloom
-        BloomFilter bloom(comb.N, comb.p, primos);
-      
-  
-
-        // Generamos el conjunto de datos
-        // vector<string> data = generateData(bloom, comb.p, 1000);
-        // Agregamos los elementos al filtro
-        // for (const string& s : data) {
-        //     bloom.add(s);
-        // }
+        cout << "Tamaño de babyBloom: " << babyBloom.size() << endl;
+        cout << "Tamaño de data: " << data.size() << endl;
+        // Elegir m y k en funcion de N
+        ll m = comb.N * 10; // se elige m para tener 7 funciones de hashing
+        ll k = (m / comb.N) * log(2);
+        // inicializar filtro de bloom
+        cout << "Creando filtro de Bloom" << endl;
+        BloomFilter bloom(m, k, primos);
+        // Agregamos los elementos de babybloom al filtro
+        for (const string& s : babyBloom) {
+            bloom.add(s);
+        }
         // Calculamos la probabilidad de falsos positivos
-        // double P = bloom.calculateFalsePositiveProbability();
-        // cout << "Probabilidad de falsos positivos: " << P << endl;
+        ll P = pow(1 - exp(-k*comb.N/m), k); // P = 1/128 teoricamente (con m = 10)
+
+        
+        // ------------------- tests -------------------
+        //Hacer consultas secuenciales tomandoles el tiempo
+        // buscar todos los elementos de data en babyBloom
+    
+        double negativoBloom = 0;
+        double falsoPositivo = 0;
+        int i = 0;
+        vector<double> times_Sec(comb.N);
+        vector<double> times_Bloom(comb.N);
+
+        cout << "------------------------- BUSQUEDA SECUENCIAL -------------------------" << endl;
+        auto begin_sec = high_resolution_clock::now();
+        for(const string& palabra : data) {
+            searchCSV(babyBloom,palabra);
+        }
+        auto end_sec = high_resolution_clock::now();
+
+        // Calcula el tiempo transcurrido y lo almacena en el vector
+        double time_sec = duration_cast<nanoseconds>(end_sec - begin_sec).count() / 1e9;
+
+        cout << "------------------------- FILTRO DE BLOOM -------------------------" << endl;
+        auto begin_bloom = high_resolution_clock::now();
+        for(const string& palabra : data) {
+            if(bloom.lookup(palabra)){
+                //cout << "real?" << endl;
+                if(!searchCSV(babyBloom,palabra)){
+                    //cout << "fake" << endl;
+                    falsoPositivo++;
+                }
+            } else {
+                negativoBloom++;
+            }
+
+        }
+        auto end_bloom = high_resolution_clock::now();
+        // Calcula el tiempo transcurrido y lo almacena en el vector
+		double time_bloom = duration_cast<nanoseconds>(end_bloom - begin_bloom).count() / 1e9;
+
+
+        //porcentaje de error
+        double pctError = falsoPositivo / (negativoBloom+falsoPositivo);
+        // Calcula tiempo promedio Heap y Fibonacci
+		//double averageTime_sec = accumulate(times_Sec.begin(), times_Sec.end(), 0.0);
+        //double averageTime_bloom = accumulate(times_Bloom.begin(), times_Bloom.end(), 0.0); //  / comb.N
+
+		// Guarda los resultados en un archivo 
+		archivo.open("resultados.txt", fstream::app);
+
+        // (|N|, p)
+		archivo << "(|N|: " << comb.N << ", p: " << comb.p << ")" << endl;
+		archivo << "Tiempo promedio busqueda secuencial para: " << time_sec << endl;
+		archivo << "Tiempo promedio filtro de Bloom: " << time_bloom << endl;
+        archivo << "Porcentaje falsos positivos: " << pctError << endl;
+		archivo << endl;
+
+		archivo.close();
+
+        i++;
+    
     }
+    // Imprime mensaje de finalización
+    cout << "------------------------- FIN -------------------------" << endl;
 
     return 0;
 }
 
 // how to compile: g++ -std=c++11 main.cpp -o mainPenguin
-
-
-// Nos damos un valor de m (bits del filtro).
-// Calculamos k (número de funciones hash) con la fórmula k = (m/n) * ln(2)
-// Para calcular la probabilidad de falsos positivos, usamos la siguiente fórmula
-// P = (1 - e^(-kn/m))^k

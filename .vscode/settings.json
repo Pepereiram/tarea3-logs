@@ -4,6 +4,9 @@
         "vector": "cpp",
         "ostream": "cpp",
         "iostream": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "cmath": "cpp",
+        "chrono": "cpp",
+        "iosfwd": "cpp"
     }
 }

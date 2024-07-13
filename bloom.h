@@ -28,8 +28,6 @@ class BloomFilter {
         // Inicializar el vector de primos y copiar los primeros k primos
         primes.resize(k);
         copy_n(prim_buffer.begin(), k, primes.begin());
-        //fill_primes(prim_buffer, k);
-        cout << (this->primes)[0] << endl;
     }
 
 
@@ -53,16 +51,18 @@ class BloomFilter {
         for (ll i = 0; i < k; ++i) {
             ll h = hash(s, primes[i]);
             // Imprimimos el primo
-            cout << "el primo xd " << primes[i] << endl;
-            cout << "el hash xd " << h << endl;
             M[h % m] = true;
         }
     }
 
     bool lookup(const string& s){
-        // Verificar si s está en el filtro
         for (ll i = 0; i < k; ++i) {
             ll h = hash(s, primes[i]);
+            if (h < 0) {
+                
+                cout << "Error: h < 0 en " << s << endl;
+                return false;
+            }
             if (!M[h % m]) {
                 return false;
             }
