@@ -40,17 +40,3 @@ bool searchCSV(const vector<vector<string>>& data, const string& target) {
     }
     return false;
 }
-
-int main() {
-    string filename = "data.csv";
-    vector<vector<string>> csvData = readCSV(filename);
-
-    string target = "busqueda";
-    if (searchCSV(csvData, target)) {
-        cout << "El string '" << target << "' fue encontrado en el archivo CSV." << endl;
-    } else {
-        cout << "El string '" << target << "' no fue encontrado en el archivo CSV." << endl;
-    }
-
-    return 0;
-}
