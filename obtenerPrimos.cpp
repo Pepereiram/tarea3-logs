@@ -1,7 +1,10 @@
+// Objetivo: extraer los numeros primos del archivo primos.csv
+// includes para reemplazar el uso de bits/stdc++.h
+#include <vector>
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <bits/stdc++.h>
 using namespace std;
 
 
@@ -31,3 +34,6 @@ int main(){
     return 0;
 }
 // g++ -std=c++11 obtenerPrimos.cpp -o op
+// Correr el programa en windows
+// .\op.exe <- basados
+// ./op -> linux <- aweonaos

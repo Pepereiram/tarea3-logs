@@ -3,33 +3,34 @@
 #include <sstream>
 #include <string>
 #include <vector>
+using namespace std;
 
 // Función para leer el archivo CSV
-std::vector<std::vector<std::string>> readCSV(const std::string& filename) {
-    std::ifstream file(filename);
-    std::vector<std::vector<std::string>> data;
-    std::string line, cell;
+vector<vector<string>> readCSV(const string& filename) {
+    ifstream file(filename);
+    vector<vector<string>> data;
+    string line, cell;
 
     if (file.is_open()) {
-        while (std::getline(file, line)) {
-            std::vector<std::string> row;
-            std::stringstream lineStream(line);
+        while (getline(file, line)) {
+            vector<string> row;
+            stringstream lineStream(line);
 
-            while (std::getline(lineStream, cell, ',')) {
+            while (getline(lineStream, cell, ',')) {
                 row.push_back(cell);
             }
             data.push_back(row);
         }
         file.close();
     } else {
-        std::cerr << "Unable to open file: " << filename << std::endl;
+        cerr << "Unable to open file: " << filename << endl;
     }
 
     return data;
 }
 
 // Función para buscar un string en el CSV
-bool searchCSV(const std::vector<std::vector<std::string>>& data, const std::string& target) {
+bool searchCSV(const vector<vector<string>>& data, const string& target) {
     for (const auto& row : data) {
         for (const auto& cell : row) {
             if (cell == target) {
@@ -41,14 +42,14 @@ bool searchCSV(const std::vector<std::vector<std::string>>& data, const std::str
 }
 
 int main() {
-    std::string filename = "data.csv";
-    std::vector<std::vector<std::string>> csvData = readCSV(filename);
+    string filename = "data.csv";
+    vector<vector<string>> csvData = readCSV(filename);
 
-    std::string target = "busqueda";
+    string target = "busqueda";
     if (searchCSV(csvData, target)) {
-        std::cout << "El string '" << target << "' fue encontrado en el archivo CSV." << std::endl;
+        cout << "El string '" << target << "' fue encontrado en el archivo CSV." << endl;
     } else {
-        std::cout << "El string '" << target << "' no fue encontrado en el archivo CSV." << std::endl;
+        cout << "El string '" << target << "' no fue encontrado en el archivo CSV." << endl;
     }
 
     return 0;

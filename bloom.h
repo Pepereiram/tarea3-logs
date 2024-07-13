@@ -19,25 +19,19 @@ class BloomFilter {
 
     //Constructor
     public:
-    BloomFilter(ll n, ll k, vector<ll> prim_buffer) {
+    BloomFilter(ll m_, ll k_, vector<ll>& prim_buffer) {
         // Inicializar el vector M con n ceros
-        M = vector<bool>(n, false);
-        // Inicializar el vector de primos
-        primes = vector<ll>(k);
+        M = vector<bool>(m_, false);
         // Inicializar k y m
-        this->k = k;
-        this->m = n;
-        // Llenar el vector de primos
-        fill_primes(prim_buffer, k);
+        this->k = k_;
+        this->m = m_;
+        // Inicializar el vector de primos y copiar los primeros k primos
+        primes.resize(k);
+        copy_n(prim_buffer.begin(), k, primes.begin());
+        //fill_primes(prim_buffer, k);
+        cout << (this->primes)[0] << endl;
     }
 
-    //se asume que existe un vector prim_buffer con una cantidad mayor
-    //o igual a n numeros primos
-    void fill_primes(vector<ll> prim_buffer, int n){
-        for(int i = 0; i < n; i++){
-            primes.push_back(prim_buffer[i]);
-        }
-    }
 
     //Inpirado en GeeksforGeeks, Polynomial Rolling Hash Function
     ll hash (const string& s, ll p){
@@ -45,9 +39,11 @@ class BloomFilter {
         ll p_pow = 1;
         const ll n = s.length();
         for (ll i = 0; i < n; ++i) {
-            hash_so_far
-                = (hash_so_far + (s[i] - 'a' + 1) * p_pow)
-                  % BigPrime;
+            ll char_value = s[i] >= 'a' && s[i] <= 'z' ? (s[i] - 'a' + 1) :
+                        s[i] >= 'A' && s[i] <= 'Z' ? (s[i] - 'A' + 27) :
+                        s[i] >= '0' && s[i] <= '9' ? (s[i] - '0' + 53) :
+                        static_cast<ll>(s[i] + 100);
+            hash_so_far = (hash_so_far + char_value * p_pow) % BigPrime;
             p_pow = (p_pow * p) % BigPrime;
         }
         return hash_so_far;
@@ -56,6 +52,9 @@ class BloomFilter {
     void add(const string& s){
         for (ll i = 0; i < k; ++i) {
             ll h = hash(s, primes[i]);
+            // Imprimimos el primo
+            cout << "el primo xd " << primes[i] << endl;
+            cout << "el hash xd " << h << endl;
             M[h % m] = true;
         }
     }

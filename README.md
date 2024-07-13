@@ -9,7 +9,7 @@
 * Calcular valores de p y m en función de N. (**Tommy**)
 * Investigar la probabilidad de fallo teorica. (**(Metal)Pipe**)
 * Crear funciones de experimentos para cada combinacion de (|N|,p). (**Prox reunión**)
-* Crear archivo del informe en Overleaf. (**(Metal)Pipe**)
+* Crear archivo del informe en Overleaf. (**Pipe(line)**)
 
 
 ## Manipulación de CSV en C++
