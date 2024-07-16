@@ -40,8 +40,12 @@ class BloomFilter {
             ll char_value = s[i] >= 'a' && s[i] <= 'z' ? (s[i] - 'a' + 1) :
                         s[i] >= 'A' && s[i] <= 'Z' ? (s[i] - 'A' + 27) :
                         s[i] >= '0' && s[i] <= '9' ? (s[i] - '0' + 53) :
-                        static_cast<ll>(s[i] + 100);
+                        static_cast<ll>(static_cast<unsigned char>(s[i]) + 100);
             hash_so_far = (hash_so_far + char_value * p_pow) % BigPrime;
+            if (hash_so_far < 0) {
+                cout << "sus: " << s << endl;
+                hash_so_far += BigPrime;
+            }
             p_pow = (p_pow * p) % BigPrime;
         }
         return hash_so_far;
@@ -59,8 +63,6 @@ class BloomFilter {
         for (ll i = 0; i < k; ++i) {
             ll h = hash(s, primes[i]);
             if (h < 0) {
-                
-                cout << "Error: h < 0 en " << s << endl;
                 return false;
             }
             if (!M[h % m]) {

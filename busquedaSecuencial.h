@@ -13,7 +13,10 @@ vector<string> readCSV(const string& filename) {
 
     if (file.is_open()) {
         while (getline(file, line)) {
-            data.push_back(line);
+            // Verificar que la línea no esté vacía antes de agregarla al vector
+            if (!line.empty()) {
+                data.push_back(line);
+            }
         }
         file.close();
     } else {
@@ -23,29 +26,6 @@ vector<string> readCSV(const string& filename) {
     return data;
 }
 
-
-// vector<vector<string>> readCSV(const string& filename) {
-//     ifstream file(filename);
-//     vector<vector<string>> data;
-//     string line, cell;
-
-//     if (file.is_open()) {
-//         while (getline(file, line)) {
-//             vector<string> row;
-//             stringstream lineStream(line);
-
-//             while (getline(lineStream, cell, ',')) {
-//                 row.push_back(cell);
-//             }
-//             data.push_back(row);
-//         }
-//         file.close();
-//     } else {
-//         cerr << "Unable to open file: " << filename << endl;
-//     }
-
-//     return data;
-// }
 
 // Función para buscar un string en el vector de strings
 bool searchCSV(const vector<string>& data, const string& target) {

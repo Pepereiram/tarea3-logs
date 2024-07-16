@@ -8,11 +8,11 @@
 #include <ctime>
 using namespace std;
 using namespace chrono;
-// Inluir el archivo de cabecera bloom.h
+
 #include "bloom.h"
 #include "busquedaSecuencial.h"
 
-// Definir las posibles combinaciones de N y p
+// Valores de N y p
 vector<int> N_values = {1024, 4096, 16384, 65536};
 vector<double> p_values = {0, 0.25, 0.5, 0.75, 1.0};
 
@@ -68,13 +68,16 @@ vector<string> generateData(int n, double P, vector<string>& babys, vector<strin
     // Los elementos de films seran randomizados 
     random_shuffle(films.begin(), films.end());
     // Elegimos n * P elementos de babys y n * (1 - P) elementos de films
-    for (int i = 0; i < n; i++) {
-        if (i < n * P) {
-            data.push_back(babys[i]);
-        } else {
-            data.push_back(films[i]);
-        }
+    int numBabys = static_cast<int>(n * P);
+    int numFilms = n - numBabys;
+
+    for (int i = 0; i < numBabys; i++) {
+        data.push_back(babys[i % babys.size()]); // Reusar nombres de babys si es necesario
     }
+    for (int i = 0; i < numFilms; i++) {
+        data.push_back(films[i % films.size()]); // Reusar nombres de films si es necesario
+    }
+
     // Randomizamos el vector de datos
     random_shuffle(data.begin(), data.end());
     return data;
@@ -99,8 +102,10 @@ int main() {
     // Leemos los CSV de Popular-Baby-Names-Final.csv y Film-Names.csv
     vector<string> babys = readCSV("Popular-Baby-Names-Final.csv");
     vector<string> films = readCSV("Film-Names.csv");
+
     // En un ciclo, para cada combinación de N y p, generamos un conjunto de datos
     // con proporción p de elementos en babys y 1-p de elementos en films
+    
     for(const Combination& comb : combinations){
         cout << "Test para N: " << comb.N << " p: " << comb.p << endl;
         // Creamos un conjunto 
@@ -113,18 +118,21 @@ int main() {
         ll m = comb.N * 10; // se elige m para tener 7 funciones de hashing
         ll k = (m / comb.N) * log(2);
         // inicializar filtro de bloom
-        cout << "Creando filtro de Bloom" << endl;
+        // Mostramos el m y el k
+        cout << "m: " << m << " k: " << k << endl;
         BloomFilter bloom(m, k, primos);
+
+        // Calculamos la probabilidad de falsos positivos
+        double P = pow(1 - exp(-k* comb.N/m), k); // P = 1/128 teoricamente (con m = 10)
+        cout << "Probabilidad esperada teorica: " << P << endl;
+        
         // Agregamos los elementos de babybloom al filtro
         for (const string& s : babyBloom) {
             bloom.add(s);
         }
-        // Calculamos la probabilidad de falsos positivos
-        ll P = pow(1 - exp(-k*comb.N/m), k); // P = 1/128 teoricamente (con m = 10)
 
-        
         // ------------------- tests -------------------
-        //Hacer consultas secuenciales tomandoles el tiempo
+        // Hacer consultas secuenciales tomandoles el tiempo
         // buscar todos los elementos de data en babyBloom
     
         double negativoBloom = 0;
@@ -147,9 +155,7 @@ int main() {
         auto begin_bloom = high_resolution_clock::now();
         for(const string& palabra : data) {
             if(bloom.lookup(palabra)){
-                //cout << "real?" << endl;
                 if(!searchCSV(babyBloom,palabra)){
-                    //cout << "fake" << endl;
                     falsoPositivo++;
                 }
             } else {
@@ -160,10 +166,8 @@ int main() {
         auto end_bloom = high_resolution_clock::now();
         // Calcula el tiempo transcurrido y lo almacena en el vector
 		double time_bloom = duration_cast<nanoseconds>(end_bloom - begin_bloom).count() / 1e9;
-
-
-        //porcentaje de error
-        double pctError = falsoPositivo / (negativoBloom+falsoPositivo);
+        // Calcula el porcentaje de error
+        double pctError = negativoBloom+falsoPositivo > 0 ? falsoPositivo / (negativoBloom+falsoPositivo) : 0;
         // Calcula tiempo promedio Heap y Fibonacci
 		//double averageTime_sec = accumulate(times_Sec.begin(), times_Sec.end(), 0.0);
         //double averageTime_bloom = accumulate(times_Bloom.begin(), times_Bloom.end(), 0.0); //  / comb.N
