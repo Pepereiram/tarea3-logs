@@ -1,22 +1,102 @@
 Resultados de la ejecución
 
 (|N|: 1024, p: 0)
-Tiempo promedio busqueda secuencial para: 0.0342077
-Tiempo promedio filtro de Bloom: 0.00394811
-Porcentaje falsos positivos: 0.0126953
+Tiempo promedio busqueda secuencial para: 0.011967
+Tiempo promedio filtro de Bloom: 0.001995
+Porcentaje falsos positivos: 0.00292969
 
 (|N|: 1024, p: 0.25)
-Tiempo promedio busqueda secuencial para: 0.0358126
-Tiempo promedio filtro de Bloom: 0.00569974
-Porcentaje falsos positivos: 0.0117188
+Tiempo promedio busqueda secuencial para: 0.008998
+Tiempo promedio filtro de Bloom: 0.001994
+Porcentaje falsos positivos: 0.0104167
 
 (|N|: 1024, p: 0.5)
-Tiempo promedio busqueda secuencial para: 0.0201129
-Tiempo promedio filtro de Bloom: 0.0083152
-Porcentaje falsos positivos: 0.00782779
+Tiempo promedio busqueda secuencial para: 0.007979
+Tiempo promedio filtro de Bloom: 0.003989
+Porcentaje falsos positivos: 0.0078125
 
 (|N|: 1024, p: 0.75)
-Tiempo promedio busqueda secuencial para: 0.0245117
-Tiempo promedio filtro de Bloom: 0.0190992
-Porcentaje falsos positivos: 0.015625
+Tiempo promedio busqueda secuencial para: 0.007978
+Tiempo promedio filtro de Bloom: 0.007989
+Porcentaje falsos positivos: 0.0117188
+
+(|N|: 1024, p: 1)
+Tiempo promedio busqueda secuencial para: 0.009018
+Tiempo promedio filtro de Bloom: 0.009973
+Porcentaje falsos positivos: 0
+
+(|N|: 4096, p: 0)
+Tiempo promedio busqueda secuencial para: 0.195476
+Tiempo promedio filtro de Bloom: 0.00798
+Porcentaje falsos positivos: 0.00805664
+
+(|N|: 4096, p: 0.25)
+Tiempo promedio busqueda secuencial para: 0.155584
+Tiempo promedio filtro de Bloom: 0.015959
+Porcentaje falsos positivos: 0.00813802
+
+(|N|: 4096, p: 0.5)
+Tiempo promedio busqueda secuencial para: 0.133642
+Tiempo promedio filtro de Bloom: 0.043885
+Porcentaje falsos positivos: 0.00537109
+
+(|N|: 4096, p: 0.75)
+Tiempo promedio busqueda secuencial para: 0.127661
+Tiempo promedio filtro de Bloom: 0.084776
+Porcentaje falsos positivos: 0.00878906
+
+(|N|: 4096, p: 1)
+Tiempo promedio busqueda secuencial para: 0.138632
+Tiempo promedio filtro de Bloom: 0.145652
+Porcentaje falsos positivos: 0
+
+(|N|: 16384, p: 0)
+Tiempo promedio busqueda secuencial para: 3.13962
+Tiempo promedio filtro de Bloom: 0.05286
+Porcentaje falsos positivos: 0.00775762
+
+(|N|: 16384, p: 0.25)
+Tiempo promedio busqueda secuencial para: 2.44944
+Tiempo promedio filtro de Bloom: 0.193483
+Porcentaje falsos positivos: 0.00684429
+
+(|N|: 16384, p: 0.5)
+Tiempo promedio busqueda secuencial para: 2.07944
+Tiempo promedio filtro de Bloom: 0.583437
+Porcentaje falsos positivos: 0.00891766
+
+(|N|: 16384, p: 0.75)
+Tiempo promedio busqueda secuencial para: 1.9438
+Tiempo promedio filtro de Bloom: 1.23969
+Porcentaje falsos positivos: 0.00904645
+
+(|N|: 16384, p: 1)
+Tiempo promedio busqueda secuencial para: 2.12531
+Tiempo promedio filtro de Bloom: 2.18118
+Porcentaje falsos positivos: 0
+
+(|N|: 65536, p: 0)
+Tiempo promedio busqueda secuencial para: 49.2233
+Tiempo promedio filtro de Bloom: 0.645274
+Porcentaje falsos positivos: 0.00843494
+
+(|N|: 65536, p: 0.25)
+Tiempo promedio busqueda secuencial para: 38.9458
+Tiempo promedio filtro de Bloom: 2.66886
+Porcentaje falsos positivos: 0.00742772
+
+(|N|: 65536, p: 0.5)
+Tiempo promedio busqueda secuencial para: 33.2152
+Tiempo promedio filtro de Bloom: 9.01688
+Porcentaje falsos positivos: 0.00791023
+
+(|N|: 65536, p: 0.75)
+Tiempo promedio busqueda secuencial para: 31.4578
+Tiempo promedio filtro de Bloom: 19.4729
+Porcentaje falsos positivos: 0.00607101
+
+(|N|: 65536, p: 1)
+Tiempo promedio busqueda secuencial para: 34.1347
+Tiempo promedio filtro de Bloom: 34.3321
+Porcentaje falsos positivos: 0
 

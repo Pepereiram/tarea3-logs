@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -6,6 +6,8 @@
 #include <sstream>
 #include <chrono>
 #include <ctime>
+#include <algorithm>
+#include <random>
 using namespace std;
 using namespace chrono;
 
@@ -15,6 +17,10 @@ using namespace chrono;
 // Valores de N y p
 vector<int> N_values = {1024, 4096, 16384, 65536};
 vector<double> p_values = {0, 0.25, 0.5, 0.75, 1.0};
+
+// Generador de números aleatorios
+random_device rd;
+mt19937 g(rd());
 
 struct Combination {
     int N;
@@ -53,7 +59,7 @@ vector<long long> extraerPrimos() {
 // Función para crear la data del filtro de bloom
 vector<string> bloomData(int N, vector<string>& babys) {
     vector<string> data;
-    random_shuffle(babys.begin(), babys.end());
+    shuffle(babys.begin(), babys.end(), g);
     // Elegimos los primeros N elementos de babys
     for (int i = 0; i < N; i++) {
         data.push_back(babys[i]);
@@ -66,7 +72,7 @@ vector<string> bloomData(int N, vector<string>& babys) {
 vector<string> generateData(int n, double P, vector<string>& babys, vector<string>& films) {
     vector<string> data;
     // Los elementos de films seran randomizados 
-    random_shuffle(films.begin(), films.end());
+    shuffle(films.begin(), films.end(), g);
     // Elegimos n * P elementos de babys y n * (1 - P) elementos de films
     int numBabys = static_cast<int>(n * P);
     int numFilms = n - numBabys;
@@ -79,7 +85,7 @@ vector<string> generateData(int n, double P, vector<string>& babys, vector<strin
     }
 
     // Randomizamos el vector de datos
-    random_shuffle(data.begin(), data.end());
+    shuffle(data.begin(), data.end(), g);
     return data;
 }
 
@@ -116,14 +122,14 @@ int main() {
         cout << "Tamaño de data: " << data.size() << endl;
         // Elegir m y k en funcion de N
         ll m = comb.N * 10; // se elige m para tener 7 funciones de hashing
-        ll k = (m / comb.N) * log(2);
+        ll k = ceil((m / comb.N) * log(2));
         // inicializar filtro de bloom
         // Mostramos el m y el k
         cout << "m: " << m << " k: " << k << endl;
         BloomFilter bloom(m, k, primos);
 
         // Calculamos la probabilidad de falsos positivos
-        double P = pow(1 - exp(-k* comb.N/m), k); // P = 1/128 teoricamente (con m = 10)
+        double P = pow(1 - exp(-static_cast<double>(k) * static_cast<double>(comb.N) / static_cast<double>(m)), static_cast<double>(k)); // P = 1/128 teoricamente (con m = 10)
         cout << "Probabilidad esperada teorica: " << P << endl;
         
         // Agregamos los elementos de babybloom al filtro
