@@ -15,6 +15,12 @@ using namespace chrono;
 // Valores de N y p
 vector<int> N_values = {1024, 4096, 16384, 65536};
 vector<double> p_values = {0, 0.25, 0.5, 0.75, 1.0};
+// Numeros primos
+vector<ll> primos = {1020361, 1020379, 1020389 ,1020401,
+                     1020407, 1020413, 1020419, 1020431,
+                     1020451, 1020457, 1020491, 1020517,
+                     1020529, 1020541, 1020557, 1020583,
+                     1020589, 1020599, 1020619, 1020631};
 
 struct Combination {
     int N;
@@ -32,23 +38,6 @@ vector<Combination> generateCombinations(const vector<int>& N_values,
     return combinations;
 }
 
-vector<long long> extraerPrimos() {
-    vector<long long> extraccion;
-    ifstream file("primos.csv");
-
-    string linea;
-    while (getline(file, linea)) {
-        stringstream ss(linea);
-        string valor;
-        while (getline(ss, valor, ',')) {
-            int numero = stoll(valor);  
-            extraccion.push_back(numero);
-        }
-    }
-
-    file.close();
-    return extraccion;
-}
 
 // Función para crear la data del filtro de bloom
 vector<string> bloomData(int N, vector<string>& babys) {
@@ -97,8 +86,6 @@ int main() {
 
     // Creamos las combinaciones de N y p
     vector<Combination> combinations = generateCombinations(N_values, p_values);
-    // Extraemos los primos
-    vector<long long> primos = extraerPrimos();
     // Leemos los CSV de Popular-Baby-Names-Final.csv y Film-Names.csv
     vector<string> babys = readCSV("Popular-Baby-Names-Final.csv");
     vector<string> films = readCSV("Film-Names.csv");
@@ -131,10 +118,8 @@ int main() {
             bloom.add(s);
         }
 
+
         // ------------------- tests -------------------
-        // Hacer consultas secuenciales tomandoles el tiempo
-        // buscar todos los elementos de data en babyBloom
-    
         double negativoBloom = 0;
         double falsoPositivo = 0;
         int i = 0;
@@ -187,7 +172,6 @@ int main() {
         i++;
     
     }
-    // Imprime mensaje de finalización
     cout << "------------------------- FIN -------------------------" << endl;
 
     return 0;
