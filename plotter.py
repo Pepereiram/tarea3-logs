@@ -55,26 +55,87 @@ def plot_results(results):
     -------
     None
     """
-    for N, data in results.items():
+
+    # Obtener los diferentes valores de N y p
+    Ns = sorted(results.keys())
+    ps = sorted(set(p for data in results.values() for p in data['p']))
+
+    # Guaramos los tiempos de búsqueda secuencial y de Bloom por p
+    seq_times_by_p = {p: [] for p in ps}
+    bloom_times_by_p = {p: [] for p in ps}
+
+    for N in Ns:
+        data = results[N]
+        for i, p in enumerate(data['p']):
+            seq_times_by_p[p].append(data['seq_times'][i])
+            bloom_times_by_p[p].append(data['bloom_times'][i])
+    
+    # Graficar los tiempos de búsqueda secuencial
+    plt.figure(figsize=(14, 7))
+    for p in ps:
+        plt.plot(Ns, seq_times_by_p[p], label=f'Secuencial, p={p}', marker='o')
+    plt.title('Tiempos de Búsqueda Secuencial vs Tamaño del Arreglo (N)')
+    plt.xlabel('Tamaño del Arreglo (N)')
+    plt.ylabel('Tiempo promedio de búsqueda secuencial (s)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+    # Graficar los tiempos del filtro de Bloom
+    plt.figure(figsize=(14, 7))
+    for p in ps:
+        plt.plot(Ns, bloom_times_by_p[p], label=f'Filtro de Bloom, p={p}', marker='o')
+    plt.title('Tiempos del Filtro de Bloom vs Tamaño del Arreglo (N)')
+    plt.xlabel('Tamaño del Arreglo (N)')
+    plt.ylabel('Tiempo promedio del filtro de Bloom (s)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+    # Graficar los tiempos de búsqueda secuencial y de Bloom por p
+    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+    axs = axs.flatten()  # Aplanar la matriz de ejes para iterar fácilmente
+
+    for ax, (N, data) in zip(axs, results.items()):
         p_values = data['p']
         seq_times = data['seq_times']
         bloom_times = data['bloom_times']
-        
-        plt.figure(figsize=(10, 6))
-        plt.plot(p_values, seq_times, label='Búsqueda Secuencial', marker='o')
-        plt.plot(p_values, bloom_times, label='Filtro de Bloom', marker='o')
-        
-        plt.title(f'Tiempos de Búsqueda vs p para |N| = {N}')
-        plt.xlabel('p')
-        plt.ylabel('Tiempo promedio (s)')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+
+        ax.plot(p_values, seq_times, label='Búsqueda Secuencial', marker='o')
+        ax.plot(p_values, bloom_times, label='Filtro de Bloom', marker='x')
+
+        ax.set_title(f'Tiempos de Búsqueda vs p para |N| = {N}')
+        ax.set_xlabel('p')
+        ax.set_ylabel('Tiempo promedio (s)')
+        ax.legend()
+        ax.grid(True)
+
+    plt.tight_layout()  # Ajustar el espaciado entre gráficos
+    plt.show()
+
+    # Graficar los porcentajes de falsos positivos
+    fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+    axs = axs.flatten()  # Aplanar la matriz de ejes para iterar fácilmente
+
+    for ax, (N, data) in zip(axs, results.items()):
+        p_values = data['p']
+        false_positive_rates = data['false_positive_rates']
+
+        ax.plot(p_values, false_positive_rates, label='Porcentaje de Falsos Positivos', marker='o')
+
+        ax.set_title(f'Falsos Positivos vs p para |N| = {N}')
+        ax.set_xlabel('p')
+        ax.set_ylabel('Porcentaje de Falsos Positivos')
+        ax.legend()
+        ax.grid(True)
+
+    plt.tight_layout()  # Ajustar el espaciado entre gráficos
+    plt.show()
 
 
 # Main
 if __name__ == '__main__':
-
+    # Probabilidad esperada teorica: 0.00819372 
     # Obtenemos los resultados
     results = parse_results('resultados.txt')
     # Graficamos los resultados
