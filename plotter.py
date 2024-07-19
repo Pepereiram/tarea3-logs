@@ -126,6 +126,8 @@ def plot_results(results):
         ax.set_title(f'Falsos Positivos vs p para |N| = {N}')
         ax.set_xlabel('p')
         ax.set_ylabel('Porcentaje de Falsos Positivos')
+        # Agregamos una linea horizontal de Probabilidad esperada teorica: 0.00819372 
+        ax.axhline(y=0.00819372, color='r', linestyle='--', label='Probabilidad esperada teorica: 0.00819')
         ax.legend()
         ax.grid(True)
 
