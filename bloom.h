@@ -43,7 +43,6 @@ class BloomFilter {
                         static_cast<ll>(static_cast<unsigned char>(s[i]) + 100);
             hash_so_far = (hash_so_far + char_value * p_pow) % BigPrime;
             if (hash_so_far < 0) {
-                cout << "sus: " << s << endl;
                 hash_so_far += BigPrime;
             }
             p_pow = (p_pow * p) % BigPrime;
@@ -54,7 +53,6 @@ class BloomFilter {
     void add(const string& s){
         for (ll i = 0; i < k; ++i) {
             ll h = hash(s, primes[i]);
-            // Imprimimos el primo
             M[h % m] = true;
         }
     }

@@ -38,7 +38,6 @@ vector<Combination> generateCombinations(const vector<int>& N_values,
     return combinations;
 }
 
-
 // Función para crear la data del filtro de bloom
 vector<string> bloomData(int N, vector<string>& babys) {
     vector<string> data;
