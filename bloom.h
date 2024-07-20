@@ -32,6 +32,11 @@ class BloomFilter {
 
 
     //Inpirado en GeeksforGeeks, Polynomial Rolling Hash Function
+
+    // Método para calcular el hash de un string
+    // s: string a calcular el hash
+    // p: primo a utilizar
+    // return: hash del string s
     ll hash (const string& s, ll p){
         ll hash_so_far = 0;
         ll p_pow = 1;
@@ -50,6 +55,8 @@ class BloomFilter {
         return hash_so_far;
     }
 
+    // Método para agregar un string al filtro de Bloom
+    // s: string a agregar
     void add(const string& s){
         for (ll i = 0; i < k; ++i) {
             ll h = hash(s, primes[i]);
@@ -57,6 +64,9 @@ class BloomFilter {
         }
     }
 
+    // Método para buscar un string en el filtro de Bloom
+    // s: string a buscar
+    // return: true si el string está en el filtro, false en caso contrario
     bool lookup(const string& s){
         for (ll i = 0; i < k; ++i) {
             ll h = hash(s, primes[i]);

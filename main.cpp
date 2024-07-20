@@ -98,19 +98,14 @@ int main() {
         vector<string> babyBloom = bloomData(comb.N, babys);
         // Creamos los conjuntos de datos
         vector<string> data = generateData(comb.N, comb.p, babyBloom, films);
-        cout << "Tamaño de babyBloom: " << babyBloom.size() << endl;
-        cout << "Tamaño de data: " << data.size() << endl;
         // Elegir m y k en funcion de N
         ll m = comb.N * 10; // se elige m para tener 7 funciones de hashing
         ll k = ceil((m / comb.N) * log(2));
-        // inicializar filtro de bloom
-        // Mostramos el m y el k
-        cout << "m: " << m << " k: " << k << endl;
+        // Inicializar filtro de bloom
         BloomFilter bloom(m, k, primos);
 
-        // Calculamos la probabilidad de falsos positivos
-        double P = pow(1 - exp(-static_cast<double>(k) * static_cast<double>(comb.N) / static_cast<double>(m)), static_cast<double>(k)); // P = 1/128 teoricamente (con m = 10)
-        cout << "Probabilidad esperada teorica: " << P << endl;
+        // Calculamos la probabilidad de falsos positivos. Probabilidad esperada teorica: 0.00819372 
+        double P = pow(1 - exp(-static_cast<double>(k) * static_cast<double>(comb.N) / static_cast<double>(m)), static_cast<double>(k));
         
         // Agregamos los elementos de babybloom al filtro
         for (const string& s : babyBloom) {
@@ -118,10 +113,9 @@ int main() {
         }
 
 
-        // ------------------- tests -------------------
+        // ------------------- Tests -------------------
         double negativoBloom = 0;
         double falsoPositivo = 0;
-        int i = 0;
         vector<double> times_Sec(comb.N);
         vector<double> times_Bloom(comb.N);
 
@@ -152,9 +146,6 @@ int main() {
 		double time_bloom = duration_cast<nanoseconds>(end_bloom - begin_bloom).count() / 1e9;
         // Calcula el porcentaje de error
         double pctError = negativoBloom+falsoPositivo > 0 ? falsoPositivo / (negativoBloom+falsoPositivo) : 0;
-        // Calcula tiempo promedio Heap y Fibonacci
-		//double averageTime_sec = accumulate(times_Sec.begin(), times_Sec.end(), 0.0);
-        //double averageTime_bloom = accumulate(times_Bloom.begin(), times_Bloom.end(), 0.0); //  / comb.N
 
 		// Guarda los resultados en un archivo 
 		archivo.open("resultados.txt", fstream::app);
@@ -167,8 +158,6 @@ int main() {
 		archivo << endl;
 
 		archivo.close();
-
-        i++;
     
     }
     cout << "------------------------- FIN -------------------------" << endl;
